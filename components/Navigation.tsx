@@ -25,7 +25,7 @@ export default function Navigation() {
           <Link href="/" className="flex items-center space-x-2 group">
             <div className="relative h-10 w-10">
               <Image
-                src="/images/logo.jpg"
+                src="/images/news/logo_small.jpg"
                 alt="FUNSALHE Logo"
                 fill
                 sizes="40px"

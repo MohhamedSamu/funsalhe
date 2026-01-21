@@ -51,7 +51,7 @@ export default function SobreNosotrosPage() {
             </div>
             <div className="mb-6 rounded-lg overflow-hidden">
               <Image
-                src="/images/Reconocimiento de  PDDH.jpg"
+                src="/images/news/salvador_mundo3.png"
                 alt="Reconocimiento de la PDDH"
                 width={600}
                 height={400}
@@ -72,7 +72,7 @@ export default function SobreNosotrosPage() {
             </div>
             <div className="mb-6 rounded-lg overflow-hidden">
               <Image
-                src="/images/Reconocimiento PHHD.jpg"
+                src="/images/news/cumbre_global.jpg"
                 alt="Reconocimiento PHHD"
                 width={600}
                 height={400}
@@ -140,7 +140,7 @@ export default function SobreNosotrosPage() {
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Proyecto de Jóvenes Líderes de El Salvador</h3>
               <div className="mb-6 rounded-lg overflow-hidden">
                 <Image
-                  src="/images/IMG-20191029-WA0023.jpg"
+                  src="/images/news/hemofilia.jpg"
                   alt="Proyecto de Jóvenes Líderes"
                   width={800}
                   height={500}

@@ -18,7 +18,7 @@ export const metadata: Metadata = {
   title: "FUNSALHE - Fundación Salvadoreña de Hemofilia",
   description: "Fundación Salvadoreña de Hemofilia - Juntos por una mejor condición de vida",
   icons: {
-    icon: '/images/logo.jpg',
+    icon: '/images/news/logo_icon.ico',
   },
 };
 

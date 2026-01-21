@@ -40,7 +40,7 @@ export default function Home() {
           <div className="text-center mb-16">
             <div className="flex justify-center mb-6">
               <Image
-                src="/images/Logo para FMH.png"
+                src="/images/news/new_logo.jpeg"
                 alt="Logo FUNSALHE"
                 width={200}
                 height={200}
