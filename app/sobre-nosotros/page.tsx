@@ -126,15 +126,6 @@ export default function SobreNosotrosPage() {
           <h2 className="text-3xl font-bold text-gray-900 mb-8">Proyectos en Desarrollo</h2>
           
           <div className="space-y-8">
-            <div>
-              <h3 className="text-2xl font-bold text-gray-900 mb-4">Censo Nacional de Hemofilia</h3>
-              <p className="text-lg text-gray-700 leading-relaxed">
-                FUNSALHE ha desarrollado un proyecto que tiene como objetivo el realizar un CENSO NACIONAL de personas con
-                trastornos de coagulación de la sangre, a fin de actualizar la información estadística ya que las cifras que
-                se manejan hoy en día datan del año 2014. Dicho censo está proyectado se ejecutar en tres etapas a realizarse
-                en la zona oriental, zona occidental y concluyendo en la zona central del país.
-              </p>
-            </div>
 
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Proyecto de Jóvenes Líderes de El Salvador</h3>
