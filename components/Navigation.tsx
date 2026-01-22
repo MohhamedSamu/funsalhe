@@ -3,10 +3,18 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { useState } from 'react';
-import { Menu, X, Heart } from 'lucide-react';
+import { Menu, X, Heart, ChevronDown } from 'lucide-react';
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
+  const [aprenderOpen, setAprenderOpen] = useState(false);
+
+  const aprenderSubItems = [
+    { href: '/aprender/historia-trastornos-hemorragicos', label: 'Historia de los Trastornos Hemorrágicos' },
+    { href: '/aprender/historia-mujeres', label: 'Historia de las Mujeres' },
+    { href: '/aprender/trastornos-hemorragicos-101', label: 'Trastornos Hemorrágicos 101' },
+    { href: '/aprender/centro-aprendizaje', label: 'Centro de Aprendizaje' },
+  ];
 
   const navItems = [
     { href: '/', label: 'Inicio' },
@@ -38,7 +46,7 @@ export default function Navigation() {
           </Link>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex space-x-1">
+          <div className="hidden md:flex space-x-1 items-center">
             {navItems.map((item) => (
               <Link
                 key={item.href}
@@ -48,6 +56,34 @@ export default function Navigation() {
                 {item.label}
               </Link>
             ))}
+            {/* Aprender Dropdown */}
+            <div 
+              className="relative"
+              onMouseEnter={() => setAprenderOpen(true)}
+              onMouseLeave={() => setAprenderOpen(false)}
+            >
+              <button
+                className="px-4 py-2 text-gray-700 hover:text-[#dc2626] hover:bg-[#fef2f2] rounded-lg transition-colors font-medium flex items-center"
+              >
+                Aprender
+                <ChevronDown className={`ml-1 h-4 w-4 transition-transform ${aprenderOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {aprenderOpen && (
+                <div className="absolute top-full left-0 pt-2 w-64 z-50">
+                  <div className="bg-white rounded-lg shadow-lg border border-gray-200 py-2">
+                    {aprenderSubItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        className="block px-4 py-2 text-gray-700 hover:text-[#dc2626] hover:bg-[#fef2f2] transition-colors text-sm"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Mobile menu button */}
@@ -74,6 +110,33 @@ export default function Navigation() {
                   {item.label}
                 </Link>
               ))}
+              {/* Aprender Mobile */}
+              <div className="px-4 py-2">
+                <button
+                  onClick={() => setAprenderOpen(!aprenderOpen)}
+                  className="flex items-center justify-between w-full text-gray-700 font-medium"
+                >
+                  Aprender
+                  <ChevronDown className={`h-4 w-4 transition-transform ${aprenderOpen ? 'rotate-180' : ''}`} />
+                </button>
+                {aprenderOpen && (
+                  <div className="mt-2 ml-4 space-y-2">
+                    {aprenderSubItems.map((item) => (
+                      <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => {
+                          setIsOpen(false);
+                          setAprenderOpen(false);
+                        }}
+                        className="block px-4 py-2 text-gray-600 hover:text-[#dc2626] hover:bg-[#fef2f2] rounded-lg transition-colors text-sm"
+                      >
+                        {item.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}

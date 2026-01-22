@@ -5,3 +5,5 @@ ALTER TABLE blog_posts
 ADD COLUMN IF NOT EXISTS publish_date DATE;
 
 
+
+
