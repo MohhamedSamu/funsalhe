@@ -1,9 +1,9 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { Phone, Mail, MapPin, Building } from 'lucide-react';
 
 async function getAgendaContacts() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('agenda')
       .select('*')
       .order('nombre', { ascending: true });

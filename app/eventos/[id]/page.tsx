@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -8,7 +8,7 @@ import { es } from 'date-fns/locale';
 
 async function getEvento(id: string) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('eventos')
       .select('*')
       .eq('id', id)

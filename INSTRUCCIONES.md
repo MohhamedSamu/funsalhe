@@ -8,8 +8,8 @@
 2. Crea un nuevo proyecto  GqMuWyCyUBveIyy6
 3. Una vez creado, ve a **Settings > API**
 4. Copia los siguientes valores:
-   - **Project URL** → Esta será tu `NEXT_PUBLIC_SUPABASE_URL`
-   - **anon public key** → Esta será tu `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - **Project URL** → Esta será tu `SUPABASE_URL` (privada) o `NEXT_PUBLIC_SUPABASE_URL` (pública)
+   - **anon public key** → Esta será tu `SUPABASE_ANON_KEY` (privada) o `NEXT_PUBLIC_SUPABASE_ANON_KEY` (pública)
 
 ### 2. Configurar la Base de Datos
 
@@ -30,9 +30,17 @@
 2. Agrega las siguientes líneas (reemplaza con tus valores reales):
 
 ```env
+# Variables privadas (solo servidor) - RECOMENDADO para producción
+SUPABASE_URL=https://tu-proyecto.supabase.co
+SUPABASE_ANON_KEY=tu_clave_anon_aqui
+
+# Variables públicas (cliente) - Solo necesarias si usas componentes del cliente
+# La anon key es segura cuando Row Level Security (RLS) está configurado correctamente
 NEXT_PUBLIC_SUPABASE_URL=https://tu-proyecto.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anon_aqui
 ```
+
+**Nota de Seguridad**: Las variables sin el prefijo `NEXT_PUBLIC_` son privadas y solo accesibles en el servidor. Para máxima seguridad, usa las variables privadas (`SUPABASE_URL` y `SUPABASE_ANON_KEY`). El código automáticamente usará las privadas cuando estén disponibles.
 
 ### 4. Instalar Dependencias y Ejecutar
 
@@ -91,8 +99,12 @@ Abre [http://localhost:3000](http://localhost:3000) en tu navegador.
 3. Haz clic en **New Project**
 4. Conecta tu repositorio
 5. En **Environment Variables**, agrega:
-   - `NEXT_PUBLIC_SUPABASE_URL` = tu URL de Supabase
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = tu clave anon de Supabase
+   - `SUPABASE_URL` = tu URL de Supabase (privada, recomendada)
+   - `SUPABASE_ANON_KEY` = tu clave anon de Supabase (privada, recomendada)
+   - `NEXT_PUBLIC_SUPABASE_URL` = tu URL de Supabase (pública, solo si usas componentes del cliente)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` = tu clave anon de Supabase (pública, solo si usas componentes del cliente)
+
+**Recomendación**: Usa las variables privadas (`SUPABASE_URL` y `SUPABASE_ANON_KEY`) para mayor seguridad.
 6. Haz clic en **Deploy**
 
 ### Opción 2: Desde la Terminal
@@ -132,6 +144,8 @@ Si tienes problemas:
 - **Nunca** subas el archivo `.env.local` a Git
 - Cambia la contraseña del administrador inmediatamente
 - En producción, considera implementar autenticación más robusta (Supabase Auth)
-- Las claves de Supabase son públicas (anon key), pero aún así no las compartas públicamente
+- **Usa variables privadas** (`SUPABASE_URL` y `SUPABASE_ANON_KEY`) en lugar de `NEXT_PUBLIC_*` para mayor seguridad
+- Las variables con prefijo `NEXT_PUBLIC_` se exponen al navegador - evítalas si es posible
+- La anon key de Supabase está diseñada para ser pública cuando Row Level Security (RLS) está configurado, pero aún así es mejor mantenerla privada cuando sea posible
 
 

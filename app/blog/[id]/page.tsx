@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { Calendar, ArrowLeft } from 'lucide-react';
@@ -7,7 +7,7 @@ import { es } from 'date-fns/locale';
 
 async function getBlogPost(id: string) {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('blog_posts')
       .select('*')
       .eq('id', id)

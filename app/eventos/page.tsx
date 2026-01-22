@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import Link from 'next/link';
 import { Calendar, MapPin, Clock, ArrowRight } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
@@ -6,7 +6,7 @@ import { es } from 'date-fns/locale';
 
 async function getEventos() {
   try {
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('eventos')
       .select('*')
       .order('fecha', { ascending: true })

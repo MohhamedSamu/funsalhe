@@ -40,9 +40,17 @@ npm install
 3. Configura las variables de entorno:
 Crea un archivo `.env.local` en la raíz del proyecto con:
 ```env
+# Variables privadas (solo servidor) - Recomendado para producción
+SUPABASE_URL=tu_url_de_supabase
+SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
+
+# Variables públicas (cliente) - Solo necesarias si usas componentes del cliente
+# La anon key es segura cuando Row Level Security (RLS) está configurado correctamente
 NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
 NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
 ```
+
+**Nota de Seguridad**: Las variables sin el prefijo `NEXT_PUBLIC_` son privadas y solo accesibles en el servidor. Las variables con `NEXT_PUBLIC_` son públicas y se exponen al navegador. Para máxima seguridad, usa las variables privadas (`SUPABASE_URL` y `SUPABASE_ANON_KEY`) en producción.
 
 ## 🗄️ Configuración de Supabase
 
@@ -75,8 +83,12 @@ npm start
 1. Sube tu código a GitHub, GitLab o Bitbucket
 2. Ve a [Vercel](https://vercel.com) y conecta tu repositorio
 3. Configura las variables de entorno en Vercel:
-   - `NEXT_PUBLIC_SUPABASE_URL`
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `SUPABASE_URL` (privada, recomendada)
+   - `SUPABASE_ANON_KEY` (privada, recomendada)
+   - `NEXT_PUBLIC_SUPABASE_URL` (pública, solo si usas componentes del cliente)
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (pública, solo si usas componentes del cliente)
+
+**Recomendación**: Usa las variables privadas (`SUPABASE_URL` y `SUPABASE_ANON_KEY`) para mayor seguridad. El código automáticamente usará las privadas cuando estén disponibles.
 4. Vercel detectará automáticamente que es un proyecto Next.js y lo desplegará
 
 O usa la CLI de Vercel:

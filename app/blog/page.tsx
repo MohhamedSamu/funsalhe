@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase';
+import { supabaseServer } from '@/lib/supabase';
 import Link from 'next/link';
 import { Calendar, ArrowRight } from 'lucide-react';
 import { format } from 'date-fns';
@@ -11,7 +11,7 @@ async function getBlogPosts() {
     const todayStr = today.toISOString().split('T')[0];
 
     // Obtener todos los posts primero, luego filtrar en el código
-    const { data, error } = await supabase
+    const { data, error } = await supabaseServer
       .from('blog_posts')
       .select('*')
       .order('created_at', { ascending: false })
