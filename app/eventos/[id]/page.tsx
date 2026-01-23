@@ -6,6 +6,10 @@ import { Calendar, MapPin, Clock, ArrowLeft } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+// Configuración de cache: forzar revalidación dinámica (no cachear)
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 async function getEvento(id: string) {
   try {
     const { data, error } = await supabaseServer

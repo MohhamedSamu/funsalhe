@@ -1,6 +1,10 @@
 import { supabaseServer } from '@/lib/supabase';
 import { Phone, Mail, MapPin, Building } from 'lucide-react';
 
+// Configuración de cache: forzar revalidación dinámica (no cachear)
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 async function getAgendaContacts() {
   try {
     const { data, error } = await supabaseServer

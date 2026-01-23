@@ -5,6 +5,10 @@ import { Calendar, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
 
+// Configuración de cache: forzar revalidación dinámica (no cachear)
+export const revalidate = 0;
+export const dynamic = 'force-dynamic';
+
 async function getBlogPost(id: string) {
   try {
     const { data, error } = await supabaseServer
