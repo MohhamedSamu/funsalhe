@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
-import { supabase } from '@/lib/supabase';
 
 export default function ContactanosPage() {
   const [formData, setFormData] = useState({
@@ -20,21 +19,25 @@ export default function ContactanosPage() {
     setIsSubmitting(true);
 
     try {
-      const { data, error } = await supabase
-        .from('contact_messages')
-        .insert([
-          {
-            nombre: formData.nombre,
-            email: formData.email,
-            telefono: formData.telefono || null,
-            asunto: formData.asunto,
-            mensaje: formData.mensaje,
-          },
-        ])
-        .select()
-        .single();
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          email: formData.email,
+          telefono: formData.telefono || null,
+          asunto: formData.asunto,
+          mensaje: formData.mensaje,
+        }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al enviar el mensaje');
+      }
 
       setIsSubmitting(false);
       setIsSubmitted(true);
@@ -98,7 +101,7 @@ export default function ContactanosPage() {
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-1">Teléfono</h3>
                     <p className="text-gray-700">
-                      Consulta nuestra agenda para números de contacto
+                      7662-9687
                     </p>
                   </div>
                 </div>

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -32,24 +31,23 @@ export default function EditarBlogPage() {
 
   const fetchPost = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const response = await fetch(`/api/admin/blog/${id}`);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al cargar la publicación');
+      }
 
-      if (data) {
+      if (result.data) {
         // Formatear fecha para input (YYYY-MM-DD)
-        const publishDate = data.publish_date ? new Date(data.publish_date).toISOString().split('T')[0] : '';
+        const publishDate = result.data.publish_date ? new Date(result.data.publish_date).toISOString().split('T')[0] : '';
         
         setFormData({
-          title: data.title || '',
-          content: data.content || '',
-          excerpt: data.excerpt || '',
-          image_url: data.image_url || '',
-          published: data.published ?? true,
+          title: result.data.title || '',
+          content: result.data.content || '',
+          excerpt: result.data.excerpt || '',
+          image_url: result.data.imagen_url || '',
+          published: result.data.published ?? true,
           publish_date: publishDate,
         });
       }
@@ -67,23 +65,26 @@ export default function EditarBlogPage() {
     setSaving(true);
 
     try {
-      // Preparar datos: convertir campos opcionales vacíos a null
-      const dataToUpdate = {
-        title: formData.title,
-        content: formData.content,
-        excerpt: formData.excerpt || null,
-        image_url: formData.image_url || null,
-        published: formData.published,
-        publish_date: formData.published ? null : (formData.publish_date || null),
-        updated_at: new Date().toISOString(),
-      };
+      const response = await fetch(`/api/admin/blog/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          content: formData.content,
+          excerpt: formData.excerpt || null,
+          imagen_url: formData.image_url || null,
+          published: formData.published,
+          publish_date: formData.published ? null : (formData.publish_date || null),
+        }),
+      });
 
-      const { error } = await supabase
-        .from('blog_posts')
-        .update(dataToUpdate)
-        .eq('id', id);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al actualizar la publicación');
+      }
 
       router.push('/admin/blog');
     } catch (error: any) {

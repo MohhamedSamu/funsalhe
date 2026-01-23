@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import { format, parseISO } from 'date-fns';
@@ -24,13 +23,13 @@ export default function AdminEventosPage() {
 
   const fetchEventos = async () => {
     try {
-      const { data, error } = await supabase
-        .from('eventos')
-        .select('*')
-        .order('fecha', { ascending: false });
+      const response = await fetch('/api/admin/eventos');
+      const result = await response.json();
 
-      if (error) throw error;
-      setEventos(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al obtener los eventos');
+      }
+      setEventos(result.data || []);
     } catch (error) {
       console.error('Error fetching eventos:', error);
     } finally {
@@ -42,12 +41,15 @@ export default function AdminEventosPage() {
     if (!confirm('¿Estás seguro de eliminar este evento?')) return;
 
     try {
-      const { error } = await supabase
-        .from('eventos')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/eventos/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al eliminar el evento');
+      }
       fetchEventos();
     } catch (error) {
       console.error('Error deleting evento:', error);

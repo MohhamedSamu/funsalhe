@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -32,27 +31,26 @@ export default function EditarEventoPage() {
 
   const fetchEvento = async () => {
     try {
-      const { data, error } = await supabase
-        .from('eventos')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const response = await fetch(`/api/admin/eventos/${id}`);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al cargar el evento');
+      }
 
-      if (data) {
+      if (result.data) {
         // Format date for input (YYYY-MM-DD)
-        const fecha = data.fecha ? new Date(data.fecha).toISOString().split('T')[0] : '';
+        const fecha = result.data.fecha ? new Date(result.data.fecha).toISOString().split('T')[0] : '';
         // Format time for input (HH:MM)
-        const hora = data.hora ? data.hora.substring(0, 5) : '';
+        const hora = result.data.hora ? result.data.hora.substring(0, 5) : '';
 
         setFormData({
-          titulo: data.titulo || '',
-          descripcion: data.descripcion || '',
+          titulo: result.data.titulo || '',
+          descripcion: result.data.descripcion || '',
           fecha: fecha,
           hora: hora,
-          ubicacion: data.ubicacion || '',
-          imagen_url: data.imagen_url || '',
+          ubicacion: result.data.ubicacion || '',
+          imagen_url: result.data.imagen_url || '',
         });
       }
     } catch (error: any) {
@@ -69,23 +67,26 @@ export default function EditarEventoPage() {
     setSaving(true);
 
     try {
-      // Preparar datos: convertir campos opcionales vacíos a null
-      const dataToUpdate = {
-        titulo: formData.titulo,
-        descripcion: formData.descripcion || null,
-        fecha: formData.fecha,
-        hora: formData.hora || null, // Convertir cadena vacía a null
-        ubicacion: formData.ubicacion || null,
-        imagen_url: formData.imagen_url || null,
-        updated_at: new Date().toISOString(),
-      };
+      const response = await fetch(`/api/admin/eventos/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titulo: formData.titulo,
+          descripcion: formData.descripcion || null,
+          fecha: formData.fecha,
+          hora: formData.hora || null,
+          ubicacion: formData.ubicacion || null,
+          imagen_url: formData.imagen_url || null,
+        }),
+      });
 
-      const { error } = await supabase
-        .from('eventos')
-        .update(dataToUpdate)
-        .eq('id', id);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al actualizar el evento');
+      }
 
       router.push('/admin/eventos');
     } catch (error: any) {

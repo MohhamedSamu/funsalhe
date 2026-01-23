@@ -24,13 +24,6 @@ export default function AprenderPage() {
       icon: BookOpen,
       color: 'bg-green-100 text-green-600',
     },
-    {
-      href: '/aprender/centro-aprendizaje',
-      title: 'Centro de Aprendizaje',
-      description: 'Espacio educativo diseñado para pacientes, cuidadores y profesionales que quieren profundizar en el conocimiento de los trastornos hemorrágicos.',
-      icon: GraduationCap,
-      color: 'bg-purple-100 text-purple-600',
-    },
   ];
 
   return (

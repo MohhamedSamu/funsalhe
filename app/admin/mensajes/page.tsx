@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Mail, CheckCircle, X } from 'lucide-react';
 import { format } from 'date-fns';
@@ -25,13 +24,13 @@ export default function AdminMensajesPage() {
 
   const fetchMessages = async () => {
     try {
-      const { data, error } = await supabase
-        .from('contact_messages')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const response = await fetch('/api/admin/messages');
+      const result = await response.json();
 
-      if (error) throw error;
-      setMessages(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al obtener los mensajes');
+      }
+      setMessages(result.data || []);
     } catch (error) {
       console.error('Error fetching messages:', error);
     } finally {
@@ -41,12 +40,19 @@ export default function AdminMensajesPage() {
 
   const markAsRead = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .update({ leido: true })
-        .eq('id', id);
+      const response = await fetch(`/api/admin/messages/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ leido: true }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al marcar como leído');
+      }
       fetchMessages();
       if (selectedMessage?.id === id) {
         setSelectedMessage({ ...selectedMessage, leido: true });
@@ -58,12 +64,19 @@ export default function AdminMensajesPage() {
 
   const markAsUnread = async (id: string) => {
     try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .update({ leido: false })
-        .eq('id', id);
+      const response = await fetch(`/api/admin/messages/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ leido: false }),
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al marcar como no leído');
+      }
       fetchMessages();
       if (selectedMessage?.id === id) {
         setSelectedMessage({ ...selectedMessage, leido: false });
@@ -77,12 +90,15 @@ export default function AdminMensajesPage() {
     if (!confirm('¿Estás seguro de eliminar este mensaje?')) return;
 
     try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/messages/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al eliminar el mensaje');
+      }
       fetchMessages();
       if (selectedMessage?.id === id) {
         setSelectedMessage(null);

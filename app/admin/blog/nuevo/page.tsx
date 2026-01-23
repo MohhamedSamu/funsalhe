@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -33,24 +32,27 @@ export default function NuevoBlogPage() {
     try {
       const adminUser = JSON.parse(localStorage.getItem('admin_user') || '{}');
       
-      // Preparar datos: convertir campos opcionales vacíos a null
-      const dataToInsert = {
-        title: formData.title,
-        content: formData.content,
-        excerpt: formData.excerpt || null,
-        image_url: formData.image_url || null,
-        published: formData.published,
-        publish_date: formData.published ? null : (formData.publish_date || null),
-        author_id: adminUser.id || null,
-      };
+      const response = await fetch('/api/admin/blog', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: formData.title,
+          content: formData.content,
+          excerpt: formData.excerpt || null,
+          imagen_url: formData.image_url || null,
+          published: formData.published,
+          publish_date: formData.published ? null : (formData.publish_date || null),
+          author_id: adminUser.id || null,
+        }),
+      });
 
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .insert([dataToInsert])
-        .select()
-        .single();
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al crear la publicación');
+      }
 
       router.push('/admin/blog');
     } catch (error: any) {

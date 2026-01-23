@@ -13,7 +13,6 @@ export default function Navigation() {
     { href: '/aprender/historia-trastornos-hemorragicos', label: 'Historia de los Trastornos Hemorrágicos' },
     { href: '/aprender/historia-mujeres', label: 'Historia de las Mujeres' },
     { href: '/aprender/trastornos-hemorragicos-101', label: 'Trastornos Hemorrágicos 101' },
-    { href: '/aprender/centro-aprendizaje', label: 'Centro de Aprendizaje' },
   ];
 
   const navItems = [

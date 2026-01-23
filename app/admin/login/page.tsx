@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import { Lock, Mail, AlertCircle } from 'lucide-react';
 
 export default function AdminLoginPage() {
@@ -18,46 +17,35 @@ export default function AdminLoginPage() {
     setIsLoading(true);
 
     try {
-      // Simple authentication - check user in database
-      // Primero buscamos por email
-      const { data, error: authError } = await supabase
-        .from('users')
-        .select('*')
-        .eq('email', email)
-        .single();
+      // Llamar a la API route del servidor (usa variables privadas)
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-      if (authError) {
-        console.error('Supabase error:', authError);
-        if (authError.code === 'PGRST116' || authError.message?.includes('No rows')) {
-          setError('Credenciales incorrectas');
-        } else {
-          setError('Error al conectar con la base de datos. Verifica tu configuración de Supabase.');
-        }
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.error || 'Error al iniciar sesión');
         setIsLoading(false);
         return;
       }
 
-      if (!data) {
-        setError('Credenciales incorrectas');
+      if (data.success && data.user) {
+        // Store session (in production, use proper session management)
+        // No guardar la contraseña en localStorage por seguridad
+        localStorage.setItem('admin_user', JSON.stringify(data.user));
+        router.push('/admin/dashboard');
+      } else {
+        setError('Error al iniciar sesión');
         setIsLoading(false);
-        return;
       }
-
-      // Verificar contraseña (en producción usar hash)
-      if (data.password !== password) {
-        setError('Credenciales incorrectas');
-        setIsLoading(false);
-        return;
-      }
-
-      // Store session (in production, use proper session management)
-      // No guardar la contraseña en localStorage por seguridad
-      const { password: _, ...userWithoutPassword } = data;
-      localStorage.setItem('admin_user', JSON.stringify(userWithoutPassword));
-      router.push('/admin/dashboard');
     } catch (err: any) {
       console.error('Login error:', err);
-      setError(err.message || 'Error al iniciar sesión. Verifica tu configuración de Supabase.');
+      setError('Error de conexión. Verifica tu conexión a internet.');
       setIsLoading(false);
     }
   };
@@ -74,7 +62,7 @@ export default function AdminLoginPage() {
             <p className="mt-2 text-sm text-gray-600">Ingresa tus credenciales para continuar</p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" autoComplete="off" data-form-type="other">
             {error && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-4 flex items-center">
                 <AlertCircle className="h-5 w-5 text-red-600 mr-2" />
@@ -95,6 +83,9 @@ export default function AdminLoginPage() {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  autoComplete="email"
+                  data-lpignore="true"
+                  data-form-type="other"
                   className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#dc2626] focus:border-transparent outline-none"
                   placeholder="tu@email.com"
                 />
@@ -114,6 +105,9 @@ export default function AdminLoginPage() {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  autoComplete="current-password"
+                  data-lpignore="true"
+                  data-form-type="other"
                   className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#dc2626] focus:border-transparent outline-none"
                   placeholder="••••••••"
                 />

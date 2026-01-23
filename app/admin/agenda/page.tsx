@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
 
@@ -22,13 +21,13 @@ export default function AdminAgendaPage() {
 
   const fetchContacts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('agenda')
-        .select('*')
-        .order('nombre', { ascending: true });
+      const response = await fetch('/api/admin/agenda');
+      const result = await response.json();
 
-      if (error) throw error;
-      setContacts(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al obtener los contactos');
+      }
+      setContacts(result.data || []);
     } catch (error) {
       console.error('Error fetching contacts:', error);
     } finally {
@@ -40,12 +39,15 @@ export default function AdminAgendaPage() {
     if (!confirm('¿Estás seguro de eliminar este contacto?')) return;
 
     try {
-      const { error } = await supabase
-        .from('agenda')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/agenda/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al eliminar el contacto');
+      }
       fetchContacts();
     } catch (error) {
       console.error('Error deleting contact:', error);

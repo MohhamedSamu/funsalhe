@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { Plus, Edit, Trash2, ArrowLeft } from 'lucide-react';
 import { format } from 'date-fns';
@@ -24,13 +23,13 @@ export default function AdminBlogPage() {
 
   const fetchPosts = async () => {
     try {
-      const { data, error } = await supabase
-        .from('blog_posts')
-        .select('*')
-        .order('created_at', { ascending: false });
+      const response = await fetch('/api/admin/blog');
+      const result = await response.json();
 
-      if (error) throw error;
-      setPosts(data || []);
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al obtener los posts');
+      }
+      setPosts(result.data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
     } finally {
@@ -42,12 +41,15 @@ export default function AdminBlogPage() {
     if (!confirm('¿Estás seguro de eliminar esta publicación?')) return;
 
     try {
-      const { error } = await supabase
-        .from('blog_posts')
-        .delete()
-        .eq('id', id);
+      const response = await fetch(`/api/admin/blog/${id}`, {
+        method: 'DELETE',
+      });
 
-      if (error) throw error;
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al eliminar la publicación');
+      }
       fetchPosts();
     } catch (error) {
       console.error('Error deleting post:', error);
@@ -108,7 +110,7 @@ export default function AdminBlogPage() {
                 {posts.map((post) => (
                   <tr key={post.id}>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{post.title}</div>
+                      <div className="text-sm font-medium text-gray-900">{post.titulo}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">

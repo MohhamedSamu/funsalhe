@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -32,22 +31,21 @@ export default function EditarContactoPage() {
 
   const fetchContact = async () => {
     try {
-      const { data, error } = await supabase
-        .from('agenda')
-        .select('*')
-        .eq('id', id)
-        .single();
+      const response = await fetch(`/api/admin/agenda/${id}`);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al cargar el contacto');
+      }
 
-      if (data) {
+      if (result.data) {
         setFormData({
-          nombre: data.nombre || '',
-          telefono: data.telefono || '',
-          email: data.email || '',
-          direccion: data.direccion || '',
-          categoria: data.categoria || 'General',
-          descripcion: data.descripcion || '',
+          nombre: result.data.nombre || '',
+          telefono: result.data.telefono || '',
+          email: result.data.email || '',
+          direccion: result.data.direccion || '',
+          categoria: result.data.categoria || 'General',
+          descripcion: result.data.descripcion || '',
         });
       }
     } catch (error: any) {
@@ -64,23 +62,26 @@ export default function EditarContactoPage() {
     setSaving(true);
 
     try {
-      // Preparar datos: convertir campos opcionales vacíos a null
-      const dataToUpdate = {
-        nombre: formData.nombre,
-        telefono: formData.telefono || null,
-        email: formData.email || null,
-        direccion: formData.direccion || null,
-        categoria: formData.categoria || 'General',
-        descripcion: formData.descripcion || null,
-        updated_at: new Date().toISOString(),
-      };
+      const response = await fetch(`/api/admin/agenda/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          telefono: formData.telefono || null,
+          email: formData.email || null,
+          direccion: formData.direccion || null,
+          categoria: formData.categoria || 'General',
+          descripcion: formData.descripcion || null,
+        }),
+      });
 
-      const { error } = await supabase
-        .from('agenda')
-        .update(dataToUpdate)
-        .eq('id', id);
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al actualizar el contacto');
+      }
 
       router.push('/admin/agenda');
     } catch (error: any) {

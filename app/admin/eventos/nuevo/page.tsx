@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -31,23 +30,26 @@ export default function NuevoEventoPage() {
     setLoading(true);
 
     try {
-      // Preparar datos: convertir campos opcionales vacíos a null
-      const dataToInsert = {
-        titulo: formData.titulo,
-        descripcion: formData.descripcion || null,
-        fecha: formData.fecha,
-        hora: formData.hora || null, // Convertir cadena vacía a null
-        ubicacion: formData.ubicacion || null,
-        imagen_url: formData.imagen_url || null,
-      };
+      const response = await fetch('/api/admin/eventos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          titulo: formData.titulo,
+          descripcion: formData.descripcion || null,
+          fecha: formData.fecha,
+          hora: formData.hora || null,
+          ubicacion: formData.ubicacion || null,
+          imagen_url: formData.imagen_url || null,
+        }),
+      });
 
-      const { data, error } = await supabase
-        .from('eventos')
-        .insert([dataToInsert])
-        .select()
-        .single();
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al crear el evento');
+      }
 
       router.push('/admin/eventos');
     } catch (error: any) {

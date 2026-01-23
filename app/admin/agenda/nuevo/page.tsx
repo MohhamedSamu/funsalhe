@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { supabase } from '@/lib/supabase';
 import Link from 'next/link';
 import { ArrowLeft, Save } from 'lucide-react';
 
@@ -31,23 +30,26 @@ export default function NuevoContactoPage() {
     setLoading(true);
 
     try {
-      // Preparar datos: convertir campos opcionales vacíos a null
-      const dataToInsert = {
-        nombre: formData.nombre,
-        telefono: formData.telefono || null,
-        email: formData.email || null,
-        direccion: formData.direccion || null,
-        categoria: formData.categoria || 'General',
-        descripcion: formData.descripcion || null,
-      };
+      const response = await fetch('/api/admin/agenda', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          nombre: formData.nombre,
+          telefono: formData.telefono || null,
+          email: formData.email || null,
+          direccion: formData.direccion || null,
+          categoria: formData.categoria || 'General',
+          descripcion: formData.descripcion || null,
+        }),
+      });
 
-      const { data, error } = await supabase
-        .from('agenda')
-        .insert([dataToInsert])
-        .select()
-        .single();
+      const result = await response.json();
 
-      if (error) throw error;
+      if (!response.ok) {
+        throw new Error(result.error || 'Error al crear el contacto');
+      }
 
       router.push('/admin/agenda');
     } catch (error: any) {
