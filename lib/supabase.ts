@@ -23,14 +23,22 @@ if (!supabaseKey || supabaseKey === 'placeholder-key' || supabaseKey === '') {
   );
 }
 
-// Logging para debugging (solo en desarrollo o si hay problemas)
-if (process.env.NODE_ENV === 'development' || process.env.DEBUG_SUPABASE === 'true') {
+// Logging para debugging
+// En desarrollo siempre muestra, en producción solo si DEBUG_SUPABASE=true
+const shouldLog = process.env.NODE_ENV === 'development' || process.env.DEBUG_SUPABASE === 'true';
+if (shouldLog) {
   console.log('🔑 Supabase Key Status:', {
     hasServiceRole: !!supabaseServiceRoleKey,
     hasAnonKey: !!supabaseAnonKey,
-    usingKey: supabaseServiceRoleKey ? 'SERVICE_ROLE' : 'ANON',
+    usingKey: supabaseServiceRoleKey ? 'SERVICE_ROLE (bypassa RLS)' : 'ANON (sujeto a RLS)',
     keyLength: supabaseKey.length,
+    supabaseUrl: supabaseUrl?.substring(0, 30) + '...',
   });
+}
+
+// Advertencia si no se está usando service role key (puede causar problemas con RLS)
+if (!supabaseServiceRoleKey && shouldLog) {
+  console.warn('⚠️  SUPABASE_SERVICE_ROLE_KEY no está configurada. Las operaciones estarán sujetas a políticas RLS.');
 }
 
 // Server-side Supabase client (private, for Server Components and API routes)

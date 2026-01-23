@@ -10,10 +10,18 @@ async function getAgendaContacts() {
 
     if (error) {
       console.error('Error fetching agenda:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return [];
     }
 
-    return data || [];
+    if (!data) {
+      console.warn('No data returned from agenda query');
+      return [];
+    }
+
+    return data;
   } catch (error) {
     console.error('Error:', error);
     return [];

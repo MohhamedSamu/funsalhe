@@ -13,7 +13,15 @@ async function getBlogPost(id: string) {
       .eq('id', id)
       .single();
 
-    if (error || !data) {
+    if (error) {
+      console.error('Error fetching blog post:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      return null;
+    }
+
+    if (!data) {
+      console.warn(`No blog post found with id: ${id}`);
       return null;
     }
 

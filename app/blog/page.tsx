@@ -16,10 +16,16 @@ async function getBlogPosts() {
 
     if (error) {
       console.error('Error fetching blog posts:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return [];
     }
 
-    if (!data) return [];
+    if (!data) {
+      console.warn('No data returned from blog_posts query');
+      return [];
+    }
 
     // Filtrar: solo posts publicados O posts programados cuya fecha ya pasó
     const today = new Date();

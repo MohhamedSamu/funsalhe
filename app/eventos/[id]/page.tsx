@@ -14,7 +14,15 @@ async function getEvento(id: string) {
       .eq('id', id)
       .single();
 
-    if (error || !data) {
+    if (error) {
+      console.error('Error fetching evento:', error);
+      console.error('Error code:', error.code);
+      console.error('Error message:', error.message);
+      return null;
+    }
+
+    if (!data) {
+      console.warn(`No evento found with id: ${id}`);
       return null;
     }
 
