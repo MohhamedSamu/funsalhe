@@ -114,7 +114,7 @@ export default function AdminBlogPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="text-sm text-gray-500">
-                        {format(new Date(post.created_at), "d MMM yyyy", { locale: es })}
+                        {format(new Date(post.publish_date || post.created_at), "d MMM yyyy", { locale: es })}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">

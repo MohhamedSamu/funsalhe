@@ -92,14 +92,18 @@ npm start
 
 1. Sube tu código a GitHub, GitLab o Bitbucket
 2. Ve a [Vercel](https://vercel.com) y conecta tu repositorio
-3. Configura las variables de entorno en Vercel:
-   - `SUPABASE_URL` (privada, recomendada)
-   - `SUPABASE_ANON_KEY` (privada, recomendada)
-   - `NEXT_PUBLIC_SUPABASE_URL` (pública, solo si usas componentes del cliente)
-   - `NEXT_PUBLIC_SUPABASE_ANON_KEY` (pública, solo si usas componentes del cliente)
+3. Configura las variables de entorno en Vercel (Settings > Environment Variables):
+   - `SUPABASE_URL` (privada, REQUERIDA)
+   - `SUPABASE_ANON_KEY` (privada, REQUERIDA)
+   - `SUPABASE_SERVICE_ROLE_KEY` (privada, **MUY RECOMENDADA** para operaciones administrativas)
 
-**Recomendación**: Usa las variables privadas (`SUPABASE_URL` y `SUPABASE_ANON_KEY`) para mayor seguridad. El código automáticamente usará las privadas cuando estén disponibles.
+**⚠️ IMPORTANTE**: 
+- **SUPABASE_SERVICE_ROLE_KEY** es esencial para que funcionen las operaciones de INSERT, UPDATE y DELETE en producción
+- Sin esta clave, las políticas RLS bloquearán las operaciones administrativas
+- Esta clave bypassa RLS y permite todas las operaciones - NUNCA la expongas al cliente
+
 4. Vercel detectará automáticamente que es un proyecto Next.js y lo desplegará
+5. **Después del deploy, verifica los logs** para asegurarte de que el service role key se esté cargando correctamente
 
 O usa la CLI de Vercel:
 

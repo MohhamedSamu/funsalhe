@@ -3,6 +3,8 @@ import { supabaseServer } from '@/lib/supabase';
 
 export async function GET(request: NextRequest) {
   try {
+    // Para el admin, mostrar TODOS los posts (publicados y no publicados)
+    // No aplicar filtros de RLS ya que estamos usando service role key
     const { data, error } = await supabaseServer
       .from('blog_posts')
       .select('*')
@@ -10,8 +12,9 @@ export async function GET(request: NextRequest) {
 
     if (error) {
       console.error('Supabase error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: 'Error al obtener los posts' },
+        { error: `Error al obtener los posts: ${error.message || 'Error desconocido'}. Código: ${error.code || 'N/A'}` },
         { status: 500 }
       );
     }
@@ -59,8 +62,9 @@ export async function POST(request: NextRequest) {
 
     if (error) {
       console.error('Supabase error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: 'Error al crear el post' },
+        { error: `Error al crear el post: ${error.message || 'Error desconocido'}. Código: ${error.code || 'N/A'}` },
         { status: 500 }
       );
     }

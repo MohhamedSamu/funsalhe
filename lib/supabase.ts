@@ -23,6 +23,16 @@ if (!supabaseKey || supabaseKey === 'placeholder-key' || supabaseKey === '') {
   );
 }
 
+// Logging para debugging (solo en desarrollo o si hay problemas)
+if (process.env.NODE_ENV === 'development' || process.env.DEBUG_SUPABASE === 'true') {
+  console.log('🔑 Supabase Key Status:', {
+    hasServiceRole: !!supabaseServiceRoleKey,
+    hasAnonKey: !!supabaseAnonKey,
+    usingKey: supabaseServiceRoleKey ? 'SERVICE_ROLE' : 'ANON',
+    keyLength: supabaseKey.length,
+  });
+}
+
 // Server-side Supabase client (private, for Server Components and API routes)
 // Usa SERVICE_ROLE_KEY si está disponible (bypassa RLS para operaciones administrativas)
 // Si no, usa ANON_KEY (sujeto a políticas RLS)

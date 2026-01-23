@@ -70,8 +70,9 @@ export async function PATCH(
 
     if (error) {
       console.error('Supabase error:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
       return NextResponse.json(
-        { error: `Error al actualizar el post: ${error.message || 'Error desconocido'}` },
+        { error: `Error al actualizar el post: ${error.message || 'Error desconocido'}. Código: ${error.code || 'N/A'}` },
         { status: 500 }
       );
     }
