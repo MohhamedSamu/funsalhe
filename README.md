@@ -40,17 +40,27 @@ npm install
 3. Configura las variables de entorno:
 Crea un archivo `.env.local` en la raíz del proyecto con:
 ```env
-# Variables privadas (solo servidor) - Recomendado para producción
+# Variables privadas (solo servidor) - REQUERIDAS
 SUPABASE_URL=tu_url_de_supabase
 SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
 
-# Variables públicas (cliente) - Solo necesarias si usas componentes del cliente
-# La anon key es segura cuando Row Level Security (RLS) está configurado correctamente
-NEXT_PUBLIC_SUPABASE_URL=tu_url_de_supabase
-NEXT_PUBLIC_SUPABASE_ANON_KEY=tu_clave_anon_de_supabase
+# Service Role Key (RECOMENDADO para operaciones administrativas)
+# Esta clave bypassa RLS y es necesaria para INSERT, UPDATE, DELETE
+# Obtén esta clave en: Settings > API > service_role key (secret)
+SUPABASE_SERVICE_ROLE_KEY=tu_service_role_key_aqui
 ```
 
-**Nota de Seguridad**: Las variables sin el prefijo `NEXT_PUBLIC_` son privadas y solo accesibles en el servidor. Las variables con `NEXT_PUBLIC_` son públicas y se exponen al navegador. Para máxima seguridad, usa las variables privadas (`SUPABASE_URL` y `SUPABASE_ANON_KEY`) en producción.
+**Nota de Seguridad**: 
+- Las variables sin el prefijo `NEXT_PUBLIC_` son privadas y solo accesibles en el servidor.
+- **SUPABASE_SERVICE_ROLE_KEY** es altamente sensible y NUNCA debe exponerse al cliente.
+- El código usa automáticamente `SERVICE_ROLE_KEY` si está disponible (bypassa RLS), si no, usa `ANON_KEY`.
+- Para operaciones administrativas (CRUD), se recomienda usar `SERVICE_ROLE_KEY` para evitar problemas con RLS.
+
+**Cómo obtener el Service Role Key:**
+1. Ve a tu proyecto en Supabase
+2. Settings > API
+3. Busca "service_role" key (secret) - está en la sección "Project API keys"
+4. Copia esa clave y agrégala a `.env.local` como `SUPABASE_SERVICE_ROLE_KEY`
 
 ## 🗄️ Configuración de Supabase
 

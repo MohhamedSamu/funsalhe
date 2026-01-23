@@ -44,9 +44,9 @@ export async function PATCH(
     const body = await request.json();
     const { titulo, descripcion, fecha, hora, ubicacion, imagen_url } = body;
 
-    if (!titulo || !descripcion || !fecha) {
+    if (!titulo || !fecha) {
       return NextResponse.json(
-        { error: 'Título, descripción y fecha son requeridos' },
+        { error: 'Título y fecha son requeridos' },
         { status: 400 }
       );
     }
@@ -58,6 +58,7 @@ export async function PATCH(
       hora: hora || null,
       ubicacion: ubicacion || null,
       imagen_url: imagen_url || null,
+      updated_at: new Date().toISOString(),
     };
 
     const { data, error } = await supabaseServer
@@ -70,7 +71,7 @@ export async function PATCH(
     if (error) {
       console.error('Supabase error:', error);
       return NextResponse.json(
-        { error: 'Error al actualizar el evento' },
+        { error: `Error al actualizar el evento: ${error.message || 'Error desconocido'}` },
         { status: 500 }
       );
     }

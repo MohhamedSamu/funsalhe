@@ -46,7 +46,7 @@ export default function EditarBlogPage() {
           title: result.data.title || '',
           content: result.data.content || '',
           excerpt: result.data.excerpt || '',
-          image_url: result.data.imagen_url || '',
+          image_url: result.data.image_url || '',
           published: result.data.published ?? true,
           publish_date: publishDate,
         });
@@ -74,7 +74,7 @@ export default function EditarBlogPage() {
           title: formData.title,
           content: formData.content,
           excerpt: formData.excerpt || null,
-          imagen_url: formData.image_url || null,
+          image_url: formData.image_url || null,
           published: formData.published,
           publish_date: formData.published ? null : (formData.publish_date || null),
         }),
@@ -214,11 +214,10 @@ export default function EditarBlogPage() {
                 required={!formData.published}
                 value={formData.publish_date}
                 onChange={handleChange}
-                min={new Date().toISOString().split('T')[0]}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#dc2626] focus:border-transparent outline-none"
               />
               <p className="mt-2 text-sm text-gray-500">
-                El post se publicará automáticamente en esta fecha
+                Puedes seleccionar cualquier fecha (pasada o futura). El post se mostrará públicamente si la fecha ya pasó o si está publicado.
               </p>
             </div>
           )}

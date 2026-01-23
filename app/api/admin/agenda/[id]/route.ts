@@ -71,7 +71,7 @@ export async function PATCH(
     if (error) {
       console.error('Supabase error:', error);
       return NextResponse.json(
-        { error: 'Error al actualizar el contacto' },
+        { error: `Error al actualizar el contacto: ${error.message || 'Error desconocido'}` },
         { status: 500 }
       );
     }

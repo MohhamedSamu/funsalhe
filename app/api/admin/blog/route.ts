@@ -32,7 +32,7 @@ export async function GET(request: NextRequest) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { title, content, excerpt, published, publish_date, imagen_url, author_id } = body;
+    const { title, content, excerpt, published, publish_date, image_url, author_id } = body;
 
     if (!title || !content) {
       return NextResponse.json(
@@ -50,7 +50,7 @@ export async function POST(request: NextRequest) {
           excerpt: excerpt || null,
           published: published ?? false,
           publish_date: publish_date || null,
-          imagen_url: imagen_url || null,
+          image_url: image_url || null,
           author_id: author_id || null,
         },
       ])

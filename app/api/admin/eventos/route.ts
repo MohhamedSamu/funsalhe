@@ -34,9 +34,9 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { titulo, descripcion, fecha, hora, ubicacion, imagen_url } = body;
 
-    if (!titulo || !descripcion || !fecha) {
+    if (!titulo || !fecha) {
       return NextResponse.json(
-        { error: 'Título, descripción y fecha son requeridos' },
+        { error: 'Título y fecha son requeridos' },
         { status: 400 }
       );
     }

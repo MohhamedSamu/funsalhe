@@ -6,11 +6,8 @@ import { es } from 'date-fns/locale';
 
 async function getBlogPosts() {
   try {
-    const now = new Date();
-    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    const todayStr = today.toISOString().split('T')[0];
-
-    // Obtener todos los posts primero, luego filtrar en el código
+    // Obtener todos los posts (publicados y programados)
+    // Ahora permitimos posts con fechas pasadas (sin restricción de fecha)
     const { data, error } = await supabaseServer
       .from('blog_posts')
       .select('*')
@@ -24,17 +21,32 @@ async function getBlogPosts() {
 
     if (!data) return [];
 
-    // Filtrar posts: publicados O (no publicados pero con fecha programada <= hoy)
+    // Filtrar: solo posts publicados O posts programados cuya fecha ya pasó
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // Resetear horas para comparar solo fechas
+
     const filteredPosts = data.filter((post) => {
+      // Posts publicados siempre se muestran
       if (post.published === true) return true;
+      
+      // Posts programados: solo mostrar si la fecha ya pasó
       if (post.published === false && post.publish_date) {
         const publishDate = new Date(post.publish_date);
-        return publishDate <= today;
+        publishDate.setHours(0, 0, 0, 0);
+        return publishDate <= today; // Solo mostrar si la fecha es hoy o pasada
       }
+      
       return false;
     });
 
-    return filteredPosts.slice(0, 20);
+    // Ordenar: primero por publish_date si existe, luego por created_at
+    const sortedPosts = filteredPosts.sort((a, b) => {
+      const dateA = new Date(a.publish_date || a.created_at);
+      const dateB = new Date(b.publish_date || b.created_at);
+      return dateB.getTime() - dateA.getTime();
+    });
+
+    return sortedPosts.slice(0, 20);
   } catch (error) {
     console.error('Error:', error);
     return [];
@@ -80,7 +92,7 @@ export default async function BlogPage() {
                 <div className="p-6">
                   <div className="flex items-center text-sm text-gray-500 mb-3">
                     <Calendar className="h-4 w-4 mr-2" />
-                    {format(new Date(post.created_at), "d 'de' MMMM, yyyy", { locale: es })}
+                    {format(new Date(post.publish_date || post.created_at), "d 'de' MMMM, yyyy", { locale: es })}
                   </div>
                   <h2 className="text-2xl font-bold text-gray-900 mb-3 line-clamp-2">
                     {post.title}

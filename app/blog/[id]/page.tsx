@@ -17,7 +17,26 @@ async function getBlogPost(id: string) {
       return null;
     }
 
-    return data;
+    // Verificar que el post sea visible públicamente
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Si está publicado, siempre visible
+    if (data.published === true) {
+      return data;
+    }
+
+    // Si está programado, solo visible si la fecha ya pasó
+    if (data.published === false && data.publish_date) {
+      const publishDate = new Date(data.publish_date);
+      publishDate.setHours(0, 0, 0, 0);
+      if (publishDate <= today) {
+        return data;
+      }
+    }
+
+    // No es visible públicamente
+    return null;
   } catch (error) {
     console.error('Error:', error);
     return null;
@@ -56,7 +75,7 @@ export default async function BlogPostPage({ params }: { params: Promise<{ id: s
 
           <div className="flex items-center text-sm text-gray-500 mb-6">
             <Calendar className="h-4 w-4 mr-2" />
-            {format(new Date(post.created_at), "d 'de' MMMM, yyyy", { locale: es })}
+            {format(new Date(post.publish_date || post.created_at), "d 'de' MMMM, yyyy", { locale: es })}
           </div>
 
           <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">

@@ -42,7 +42,7 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { title, content, excerpt, published, publish_date, imagen_url } = body;
+    const { title, content, excerpt, published, publish_date, image_url } = body;
 
     if (!title || !content) {
       return NextResponse.json(
@@ -57,7 +57,7 @@ export async function PATCH(
       excerpt: excerpt || null,
       published: published ?? false,
       publish_date: publish_date || null,
-      imagen_url: imagen_url || null,
+      image_url: image_url || null,
       updated_at: new Date().toISOString(),
     };
 
@@ -71,7 +71,7 @@ export async function PATCH(
     if (error) {
       console.error('Supabase error:', error);
       return NextResponse.json(
-        { error: 'Error al actualizar el post' },
+        { error: `Error al actualizar el post: ${error.message || 'Error desconocido'}` },
         { status: 500 }
       );
     }
