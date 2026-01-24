@@ -107,8 +107,11 @@ export default function NuevoContactoPage() {
                 value={formData.telefono}
                 onChange={handleChange}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#dc2626] focus:border-transparent outline-none"
-                placeholder="0000-0000"
+                placeholder="0000-0000 o 0000-0000, 0000-0000 (múltiples separados por comas)"
               />
+              <p className="mt-1 text-sm text-gray-500">
+                Puedes ingresar múltiples teléfonos separados por comas (ej: 2222-0000, 2222-1111)
+              </p>
             </div>
 
             <div>
@@ -140,10 +143,7 @@ export default function NuevoContactoPage() {
             >
               <option value="General">General</option>
               <option value="Emergencias">Emergencias</option>
-              <option value="Hospitales">Hospitales</option>
-              <option value="Centros de Salud">Centros de Salud</option>
-              <option value="Farmacias">Farmacias</option>
-              <option value="Oficinas">Oficinas</option>
+              <option value="Hospital">Hospital</option>
               <option value="Otros">Otros</option>
             </select>
           </div>

@@ -35,15 +35,66 @@ async function getAgendaContacts() {
 export default async function AgendaPage() {
   const contacts = await getAgendaContacts();
 
-  // Group contacts by category if they have one
+  // Normalizar categorías: "Hospitales" -> "Hospital"
+  const normalizeCategory = (cat: string) => {
+    if (!cat) return 'General';
+    if (cat.toLowerCase().includes('hospital')) return 'Hospital';
+    return cat;
+  };
+
+  // Group contacts by category
   const groupedContacts = contacts.reduce((acc: any, contact: any) => {
-    const category = contact.categoria || 'General';
+    const category = normalizeCategory(contact.categoria || 'General');
     if (!acc[category]) {
       acc[category] = [];
     }
     acc[category].push(contact);
     return acc;
   }, {});
+
+  // Orden de categorías específico
+  const categoryOrder = ['General', 'Emergencias', 'Hospital', 'Otros'];
+  
+  // Ordenar las categorías según el orden especificado
+  const sortedCategories = Object.keys(groupedContacts).sort((a, b) => {
+    const indexA = categoryOrder.indexOf(a);
+    const indexB = categoryOrder.indexOf(b);
+    
+    // Si ambas están en el orden especificado, usar ese orden
+    if (indexA !== -1 && indexB !== -1) {
+      return indexA - indexB;
+    }
+    // Si solo una está en el orden, esa va primero
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    // Si ninguna está en el orden, ordenar alfabéticamente
+    return a.localeCompare(b);
+  });
+
+  // Función para dividir teléfonos por comas y crear lista
+  const renderPhones = (telefono: string) => {
+    if (!telefono) return null;
+    
+    const phones = telefono.split(',').map(phone => phone.trim()).filter(phone => phone);
+    
+    if (phones.length === 0) return null;
+    
+    return (
+      <div className="space-y-2">
+        {phones.map((phone, index) => (
+          <div key={index} className="flex items-center text-gray-700">
+            <Phone className="h-5 w-5 text-[#dc2626] mr-3 flex-shrink-0" />
+            <a
+              href={`tel:${phone}`}
+              className="hover:text-[#dc2626] transition-colors"
+            >
+              {phone}
+            </a>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-[#fef2f2] py-12">
@@ -67,14 +118,14 @@ export default async function AgendaPage() {
           </div>
         ) : (
           <div className="space-y-8">
-            {Object.entries(groupedContacts).map(([category, items]: [string, any]) => (
+            {sortedCategories.map((category) => (
               <div key={category}>
                 <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
                   <Building className="h-6 w-6 text-[#dc2626] mr-2" />
                   {category}
                 </h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {items.map((contact: any) => (
+                  {groupedContacts[category].map((contact: any) => (
                     <div
                       key={contact.id}
                       className="bg-white rounded-xl shadow-md hover:shadow-xl transition-shadow p-6"
@@ -82,17 +133,7 @@ export default async function AgendaPage() {
                       <h3 className="text-xl font-bold text-gray-900 mb-4">{contact.nombre}</h3>
                       
                       <div className="space-y-3">
-                        {contact.telefono && (
-                          <div className="flex items-center text-gray-700">
-                            <Phone className="h-5 w-5 text-[#dc2626] mr-3 flex-shrink-0" />
-                            <a
-                              href={`tel:${contact.telefono}`}
-                              className="hover:text-[#dc2626] transition-colors"
-                            >
-                              {contact.telefono}
-                            </a>
-                          </div>
-                        )}
+                        {renderPhones(contact.telefono)}
                         
                         {contact.email && (
                           <div className="flex items-center text-gray-700">
